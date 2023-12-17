@@ -1,73 +1,63 @@
 import * as cocoSsd from "@tensorflow-models/coco-ssd";
 import * as tf from "@tensorflow/tfjs";
-import { cameraWithTensors } from "@tensorflow/tfjs-react-native";
+import { cameraWithTensors, bundleResourceIO } from "@tensorflow/tfjs-react-native";
 import { Camera } from "expo-camera";
 import React, { useEffect, useRef, useState } from "react";
 import { Dimensions, LogBox, Platform, StyleSheet, View } from "react-native";
 import Canvas from "react-native-canvas";
-
 const TensorCamera = cameraWithTensors(Camera);
 
-LogBox.ignoreAllLogs(true);
+// LogBox.ignoreAllLogs(true);
 
 const { width, height } = Dimensions.get("window");
 
 export default function App() {
-  const [model, setModel] = useState<cocoSsd.ObjectDetection>();
+  // const [model, setModel] = useState<cocoSsd.ObjectDetection>();
+  const [model, setModel] = useState<tf.GraphModel>();
   let context = useRef<CanvasRenderingContext2D>();
   const canvas = useRef<Canvas>();
 
+  // function handleCameraStream(images: any) {
+  //   const loop = async () => {
+  //     const nextImageTensor = images.next().value;
+
+  //     if (!model || !nextImageTensor) throw new Error('no model');
+
+  //     model
+  //       .detect(nextImageTensor)
+  //       .then((predictions) => {
+  //         drawRectangle(predictions, nextImageTensor);
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+
+  //     requestAnimationFrame(loop);
+  //   };
+  //   loop();
+  // }
   function handleCameraStream(images: any) {
     const loop = async () => {
       const nextImageTensor = images.next().value;
 
       if (!model || !nextImageTensor) throw new Error("no model");
 
-      model
-        .detect(nextImageTensor)
-        .then((predictions) => {
-          drawRectangle(predictions, nextImageTensor);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      console.log("nextImageTensor", nextImageTensor);
+      const predictions = model.predict(nextImageTensor);
+      console.log(predictions, "predictions");
+      // .then((predictions) => {
+      //   drawRectangle(predictions, nextImageTensor);
+      // })
+      // .catch((err) => {
+      //   console.log(err);
+      // });
 
       requestAnimationFrame(loop);
     };
     loop();
   }
 
-  function drawRectangle(predictions: cocoSsd.DetectedObject[], nextImageTensor: any) {
-    if (!context.current || !canvas.current) {
-      console.log("no context or canvas");
-      return;
-    }
-
-    console.log(predictions);
-
-    // to match the size of the camera preview
-    const scaleWidth = width / nextImageTensor.shape[1];
-    const scaleHeight = height / nextImageTensor.shape[0];
-
-    const flipHorizontal = Platform.OS === "ios" ? false : true;
-
-    // We will clear the previous prediction
-    context.current.clearRect(0, 0, width, height);
-
-    // Draw the rectangle for each prediction
-    for (const prediction of predictions) {
-      const [x, y, width, height] = prediction.bbox;
-
-      // Scale the coordinates based on the ratios calculated
-      const boundingBoxX = flipHorizontal ? canvas.current.width - x * scaleWidth - width * scaleWidth : x * scaleWidth;
-      const boundingBoxY = y * scaleHeight;
-
-      // Draw the bounding box.
-      context.current.strokeRect(boundingBoxX, boundingBoxY, width * scaleWidth, height * scaleHeight);
-      // Draw the label
-      context.current.fillText(prediction.class, boundingBoxX - 5, boundingBoxY - 5);
-    }
-  }
+  function drawRectangle(predictions: cocoSsd.DetectedObject[], nextImageTensor: any) {}
 
   const handleCanvas = async (can: Canvas) => {
     if (can) {
@@ -87,15 +77,32 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestPermissionsAsync();
-      await tf.ready();
-      setModel(await cocoSsd.load());
+      try {
+        const { status } = await Camera.requestCameraPermissionsAsync();
+        await tf.ready();
+        // setModel(await cocoSsd.load());
+        const modelJson = require("./assets/kaggle/model.json");
+        const mobilenet_v2 = await require("./assets/kaggle/mobilenet_v2.bin");
+        // const modelWeights1 = await require("./assets/kaggle/group1-shard1of2.bin");
+        // const modelWeights2 = await require("./assets/kaggle/group1-shard2of2.bin");
+        // setModel(
+        //   await tf.loadGraphModel("https://www.kaggle.com/models/google/mobilenet-v2/frameworks/TfJs/variations/035-128-classification/versions/3", {
+        //     fromTFHub: true,
+        //   })
+        // );
+
+        const model = await tf.loadGraphModel(bundleResourceIO(modelJson, mobilenet_v2));
+        console.log("mmm...", model);
+        // setModel(model);
+      } catch (err) {
+        console.log("error in useEffect", err);
+      }
     })();
   }, []);
 
   return (
     <View style={styles.container}>
-      <TensorCamera
+      {/* <TensorCamera
         // Standard Camera props
         style={styles.camera}
         type={Camera.Constants.Type.back}
@@ -108,7 +115,7 @@ export default function App() {
         onReady={handleCameraStream}
         autorender={true}
         useCustomShadersToResize={false}
-      />
+      /> */}
 
       <Canvas style={styles.canvas} ref={handleCanvas} />
     </View>

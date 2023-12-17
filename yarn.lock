@@ -1379,27 +1379,9 @@
     json5 "^2.2.2"
     write-file-atomic "^2.3.0"
 
-"@expo/metro-config@^0.10.7":
+"@expo/metro-config@^0.10.7", "@expo/metro-config@~0.10.0":
   version "0.10.7"
   resolved "https://registry.yarnpkg.com/@expo/metro-config/-/metro-config-0.10.7.tgz#d1b91baffcb7feb52fc7e2e122450bfc5d01e7c1"
-  integrity sha512-uACymEiyX0447hI4unt+2cemLQkTZXKvTev936NhtsgVnql45EP0V0pzmo/0H0WlHaAGXgvOBZJl8wFqcJ3CbQ==
-  dependencies:
-    "@expo/config" "~8.1.0"
-    "@expo/env" "0.0.5"
-    "@expo/json-file" "~8.2.37"
-    chalk "^4.1.0"
-    debug "^4.3.2"
-    find-yarn-workspace-root "~2.0.0"
-    getenv "^1.0.0"
-    jsc-safe-url "^0.2.4"
-    lightningcss "~1.19.0"
-    postcss "~8.4.21"
-    resolve-from "^5.0.0"
-    sucrase "^3.20.0"
-
-"@expo/metro-config@~0.10.0":
-  version "0.10.7"
-  resolved "https://registry.npmjs.org/@expo/metro-config/-/metro-config-0.10.7.tgz"
   integrity sha512-uACymEiyX0447hI4unt+2cemLQkTZXKvTev936NhtsgVnql45EP0V0pzmo/0H0WlHaAGXgvOBZJl8wFqcJ3CbQ==
   dependencies:
     "@expo/config" "~8.1.0"
@@ -4626,7 +4608,7 @@ metro-config@0.76.8:
 
 metro-config@0.80.1, metro-config@^0.80.1:
   version "0.80.1"
-  resolved "https://registry.npmjs.org/metro-config/-/metro-config-0.80.1.tgz"
+  resolved "https://registry.yarnpkg.com/metro-config/-/metro-config-0.80.1.tgz#9a0e3359e77e93e781ca22e3be3667d6f00d5090"
   integrity sha512-ADbPLfMAe68CJGwu6vM0cXImfME0bauLK8P98mQbiAP6xLYVehCdeXEWSe9plVWhzpPLNemSr1AlTvPTMdl3Bw==
   dependencies:
     connect "^3.6.5"

@@ -1,7 +1,7 @@
 {
   "weightsManifest": [
     {
-      "paths": ["group1-shard1of2.bin", "group1-shard2of2.bin"],
+      "paths": ["mobilenet_v2.bin"],
       "weights": [
         { "dtype": "float32", "shape": [], "name": "module_apply_default/hub_input/Mul/y" },
         { "dtype": "float32", "shape": [], "name": "module_apply_default/hub_input/Sub/y" },
